@@ -1,0 +1,25 @@
+{
+  "defaultConfig":{
+    "aperture": 1.0,
+    "cone_radius_bottom": 512,
+    "cone_radius_top" : 512,
+    "cone_height" : 512,
+    "cone_bottom" : 0,
+    "cone_orientation" : 0
+  },
+  "globalConfig":{
+    "pointerColor": "#FF0000"
+  },
+  "imageConfig":[
+    {
+      "path":"01_input.jpg",
+      "name":"01_input.jpg",
+      "aperture": 1.0,
+      "cone_radius_bottom": 512,
+      "cone_radius_top" : 512,
+      "cone_height" : 512,
+      "cone_bottom" : 0,
+      "cone_orientation" : 0
+    }
+  ]
+}
