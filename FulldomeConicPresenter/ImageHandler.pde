@@ -114,6 +114,10 @@ class ImageHandler {
      }
      */
   }
+  
+  color getBackgroundColor() {
+    return currentImg.get(0,0);
+  }
 
   String getImageName(int index) {
     return imageNames.get(index);

@@ -69,6 +69,7 @@ void prevImage() {
   img = myImgHandler.getPrevImage();
   updateCanvas(img);
   updateGui();
+  BG_COLOR = myImgHandler.getBackgroundColor();
   /*
   try {
    mesh.setTexture(loadImage(images.get(currentImage)));
@@ -82,6 +83,7 @@ void nextImage() {
   img = myImgHandler.getNextImage();
   updateCanvas(img);
   updateGui();
+  BG_COLOR = myImgHandler.getBackgroundColor();
   /*
   try {
    mesh.setTexture(loadImage(images.get(currentImage)));

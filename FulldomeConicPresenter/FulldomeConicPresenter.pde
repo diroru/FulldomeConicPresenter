@@ -23,6 +23,7 @@ PImage img;
 ControlP5 cp5;
 ImageHandler myImgHandler;
 PresenterConfiguration myConfig;
+color BG_COLOR = color(0);
 
 /*TODO:
  - image handling
@@ -41,6 +42,7 @@ void setup() {
   myImgHandler = new ImageHandler("images");
 
   img = myImgHandler.currentImg;
+  BG_COLOR = myImgHandler.getBackgroundColor();
 
   coneInfo = new ConicMeshInfo(400, 400);
   myConfig = new PresenterConfiguration("config.json", myImgHandler);
@@ -64,10 +66,10 @@ void setup() {
 void draw() {
   PVector mm = mappedMouse(FULLDOME_MODE);
 
-  background(0);
+  background(BG_COLOR);
 
   canvas.beginDraw();
-  canvas.background(0);
+  canvas.background(BG_COLOR);
   canvas.image(img, 0, 0);
   canvas.ellipseMode(RADIUS);
   canvas.noStroke();
