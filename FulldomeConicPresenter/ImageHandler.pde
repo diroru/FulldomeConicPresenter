@@ -1,5 +1,5 @@
 class ImageHandler {
-  ArrayList<String> imgPaths;
+  ArrayList<String> imagePaths = new ArrayList<String>();
   HashMap<String, String> imageNameMap  = new HashMap<String, String>();
   ArrayList<String> imageNames = new ArrayList<String>();
 
@@ -9,28 +9,63 @@ class ImageHandler {
   ImageHandler(String path) {
     loadImages(path);
     currentImg = getImage(currentImgIndex);
-    prevImg = getImage(currentImgIndex-1);
-    nextImg = getImage(currentImgIndex+1);
+    //prevImg = getImage(currentImgIndex-1);
+    //nextImg = getImage(currentImgIndex+1);
   }
 
   PImage getNextImage() {
-      /*
+    currentImgIndex = (currentImgIndex + 1) %  imageNames.size();
+    currentImg = getImage(currentImgIndex);
+    /*
      prevImg = currentImg.copy();
      currentImg = nextImg.copy();
      nextImg = getImage(currentImgIndex+1);
      */
-     
-     prevImg = currentImg;
+    //currentImg = getImage(currentImgIndex+1);
+
+
+    /*
+    prevImg = currentImg;
      currentImg = nextImg;
      nextImg = getImage(currentImgIndex+1);
-
+     */
     //prevImg = getImage(currentImgIndex);
     //currentImg = getImage(currentImgIndex+1);
     //nextImg = getImage(currentImgIndex+2);
     while (currentImg.width == 0) {
       println("waiting");
     }
-    currentImgIndex = (currentImgIndex + 1) %  imageNames.size();
+    println("current", imageNames.get(currentImgIndex));
+    println("---");
+    return currentImg;
+  }
+
+  PImage getPrevImage() {
+    currentImgIndex = (currentImgIndex + imageNames.size() - 1) %  imageNames.size();
+    currentImg = getImage(currentImgIndex);
+    /*
+     prevImg = currentImg.copy();
+     currentImg = nextImg.copy();
+     nextImg = getImage(currentImgIndex-1);
+     */
+
+    //currentImg = getImage(currentImgIndex-1);
+
+
+
+    //prevImg = getImage(currentImgIndex);
+    //currentImg = getImage(currentImgIndex+1);
+    //nextImg = getImage(currentImgIndex+2);
+
+    /*
+    nextImg = currentImg;
+    currentImg = prevImg;
+    prevImg = getImage(currentImgIndex-1);
+    */
+    while (currentImg.width == 0) {
+      println("waiting");
+    }
+
     println("current", imageNames.get(currentImgIndex));
     println("---");
     return currentImg;
@@ -59,11 +94,12 @@ class ImageHandler {
     File folder = new File(dataPath(path));
     for (final File fileEntry : folder.listFiles()) {
       if (!fileEntry.isDirectory()) {
-        String filePath = fileEntry.getName();
-        if (!filePath.startsWith(".") && (filePath.endsWith("jpeg") ||  filePath.endsWith("jpg") || filePath.endsWith("png"))) {
+        String fileName = fileEntry.getName();
+        if (!fileName.startsWith(".") && (fileName.endsWith("jpeg") ||  fileName.endsWith("jpg") || fileName.endsWith("png"))) {
           println(fileEntry.getAbsolutePath());
-          imageNames.add(fileEntry.getName());
-          imageNameMap.put(fileEntry.getName(), fileEntry.getAbsolutePath());
+          imageNames.add(fileName);
+          imageNameMap.put(fileName, fileEntry.getAbsolutePath());
+          imagePaths.add(fileEntry.getAbsolutePath());
         }
       }
     }
@@ -77,5 +113,18 @@ class ImageHandler {
      imageNameMap.put(imagePaths.get(i), imagePaths.get(i).);
      }
      */
+  }
+
+  String getImageName(int index) {
+    return imageNames.get(index);
+  }
+
+  String getImagePath(int index) {
+    return imagePaths.get(index);
+  }
+
+
+  int getImageCount() {
+    return imageNames.size();
   }
 }

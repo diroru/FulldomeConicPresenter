@@ -22,6 +22,7 @@ PImage img;
 
 ControlP5 cp5;
 ImageHandler myImgHandler;
+PresenterConfiguration myConfig;
 
 /*TODO:
  - image handling
@@ -37,18 +38,27 @@ ImageHandler myImgHandler;
 void setup() {
   size(1000, 1000, P3D);
   pixelDensity(displayDensity());
-  initGUI();
   myImgHandler = new ImageHandler("images");
 
   img = myImgHandler.currentImg;
 
   coneInfo = new ConicMeshInfo(400, 400);
+  myConfig = new PresenterConfiguration("config.json", myImgHandler);
 
   domeShader = loadShader("glsl/fulldomeCone.frag", "glsl/fulldomeCone.vert");
   updateShader();
   updateCanvas(img);
   
   initShape();
+  
+  
+  APERTURE = myConfig.getImageParam(myImgHandler.currentImgIndex, "aperture");
+  CONE_RADIUS_BOTTOM = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_radius_bottom");
+  CONE_RADIUS_TOP = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_radius_top");
+  CONE_HEIGHT = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_height");
+  CONE_BOTTOM = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_bottom");
+  CONE_ORIENTATION = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_orientation");
+  initGUI();
 }
 
 void draw() {
