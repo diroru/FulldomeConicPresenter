@@ -1,5 +1,10 @@
 {
-  "globalConfig": {"pointerColor": "#FF0000"},
+  "globalConfig": {
+    "domeSize": 600,
+    "pointerColor": "FF00FF00",
+    "pointerSize": 10,
+    "canvasSize": 4096
+  },
   "defaultConfig": {
     "cone_radius_top": 512,
     "aperture": 1,
@@ -13,11 +18,11 @@
       "cone_radius_top": 179.99998474121094,
       "path": "/Users/dimitar/Documents/Processing/sketches/fulldome/FulldomeConicPresenter/data/images/01_input.jpg",
       "aperture": 0.4399999976158142,
-      "cone_bottom": -340.00006103515625,
+      "cone_bottom": 410,
       "cone_height": 512,
       "name": "01_input.jpg",
       "cone_radius_bottom": 329.9999694824219,
-      "cone_orientation": 0
+      "cone_orientation": 75.5999984741211
     },
     {
       "cone_radius_top": 815,

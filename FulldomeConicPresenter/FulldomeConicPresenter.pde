@@ -24,6 +24,8 @@ ControlP5 cp5;
 ImageHandler myImgHandler;
 PresenterConfiguration myConfig;
 color BG_COLOR = color(0);
+color pointerColor;
+boolean showCursor = true;
 
 /*TODO:
  - image handling
@@ -37,23 +39,33 @@ color BG_COLOR = color(0);
  */
 
 void setup() {
-  size(1000, 1000, P3D);
+  size(512, 512, P3D);
   pixelDensity(displayDensity());
+
   myImgHandler = new ImageHandler("images");
 
   img = myImgHandler.currentImg;
   BG_COLOR = myImgHandler.getBackgroundColor();
 
-  coneInfo = new ConicMeshInfo(400, 400);
   myConfig = new PresenterConfiguration("config.json", myImgHandler);
+
+  surface.setResizable(true);
+  surface.setSize(myConfig.getDomeSize(), myConfig.getDomeSize());
+  surface.setResizable(false);
+
+  coneInfo = new ConicMeshInfo(width/2, height/2);
+  pointerColor = unhex(myConfig.getPointerColor());
 
   domeShader = loadShader("glsl/fulldomeCone.frag", "glsl/fulldomeCone.vert");
   updateShader();
-  updateCanvas(img);
-  
+
+  canvas = createGraphics(myConfig.getCanvasSize(), myConfig.getCanvasSize()/2, P2D);
+
+  domeShader.set("canvas", canvas);
+  //updateCanvas(img);
+
   initShape();
-  
-  
+
   APERTURE = myConfig.getImageParam(myImgHandler.currentImgIndex, "aperture");
   CONE_RADIUS_BOTTOM = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_radius_bottom");
   CONE_RADIUS_TOP = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_radius_top");
@@ -67,15 +79,16 @@ void draw() {
   PVector mm = mappedMouse(FULLDOME_MODE);
 
   background(BG_COLOR);
+  float pointerSize = myConfig.getPointerSize() * img.height / float(height);
 
   canvas.beginDraw();
   canvas.background(BG_COLOR);
-  canvas.image(img, 0, 0);
+  fitImage(canvas, img);
   canvas.ellipseMode(RADIUS);
   canvas.noStroke();
-  canvas.fill(255, 0, 0, 192);
-  canvas.ellipse(mm.x, mm.y, 10, 10);
-  canvas.ellipse(mm.x + canvas.width, mm.y, 10, 10);
+  canvas.fill(pointerColor);
+  canvas.ellipse(mm.x, mm.y, pointerSize, pointerSize);
+  canvas.ellipse(mm.x + canvas.width, mm.y, pointerSize, pointerSize);
   canvas.endDraw();
   //image(canvas,0,0, canvasToWindowRatio() * canvas.width, canvasToWindowRatio() * canvas.height );
   //CONE_ORIENTATION = frameCount/10000f;
@@ -108,7 +121,26 @@ void mouseWheel(MouseEvent event) {
 }
 
 void mouseDragged() {
-  //CONE_BOTTOM += (mouseY - pmouseY);
+  PVector dm = new PVector(pmouseX - mouseX, pmouseY - mouseY);
+  PVector radial = new PVector(mouseX - width/2, mouseY - height/2);
+  radial.normalize();
+  PVector tangential = radial.copy();
+  tangential.rotate(HALF_PI);
+  tangential.normalize();
+  
+  float radComponent = dm.dot(radial);
+  float tanComponent = dm.dot(tangential);
+  println(radComponent, tanComponent);
+   
+  int dmy = (pmouseY - mouseY);
+  int dmx = (pmouseX - mouseX);
+  if (abs(radComponent) > abs(tanComponent)) {
+    coneBottom(CONE_BOTTOM + radComponent);
+  } else {
+    coneOrientation(CONE_ORIENTATION - map(-tanComponent, 0, width / 4, 0, 45));
+  }  
+  updateGui();
+  //CONE_ORIENTATION += map((pmouseX - mouseX), 0, width / 4, 0, 0.25);
   //CONE_BOTTOM = constrain(CONE_BOTTOM, -2048, 2048);
 }
 
@@ -117,20 +149,35 @@ void keyPressed() {
   case 'G':
   case 'g':
     drawGUI = !drawGUI;
+    break;
+  case 'C':
+  case 'c':
+    showCursor = !showCursor;
+    if(showCursor) {
+      cursor();
+    } else {
+      noCursor();
+    }
+    break;
+  case ' ':
+    nextImage();
+    break;
   }
 }
 
+/*
 void updateCanvas(PImage img) {
-  canvas = createGraphics(img.width, img.height, P2D);
-  println("w", img.width, "h", img.height);
-  /*
-  canvas.beginDraw();
-  canvas.background(0);
-  canvas.image(img, 0, 0);
-  canvas.endDraw();
-  */
-  domeShader.set("canvas", canvas);
-}
+ canvas = createGraphics(img.width, img.height, P2D);
+ println("w", img.width, "h", img.height);
+ 
+ //canvas.beginDraw();
+ //canvas.background(0);
+ //canvas.image(img, 0, 0);
+ //canvas.endDraw();
+ 
+ domeShader.set("canvas", canvas);
+ }
+ */
 
 void initShape() {
   domeQuad = createShape();
@@ -143,6 +190,11 @@ void initShape() {
   domeQuad.vertex(width * 0.5f, height * 0.5f, 0, 0, 0);
   domeQuad.vertex(-width * 0.5f, height * 0.5f, 0, 1, 0);
   domeQuad.endShape();
+}
+
+void fitImage(PGraphics canvas, PImage img) {
+  float s = max(float(canvas.width)/img.width, float(canvas.height)/img.height);
+  canvas.image(img, 0, 0, img.width*s, img.height*s);
 }
 
 void mouseMoved() {

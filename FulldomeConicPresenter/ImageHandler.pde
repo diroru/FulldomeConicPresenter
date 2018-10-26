@@ -83,7 +83,7 @@ class ImageHandler {
 
     try {
       //println("getting", index);
-      result = loadImage(imageNameMap.get(imageNames.get(index)));
+      result = requestImage(imageNameMap.get(imageNames.get(index)));
     } 
     catch(Exception e) {
     }

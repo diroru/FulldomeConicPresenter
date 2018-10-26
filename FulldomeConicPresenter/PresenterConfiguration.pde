@@ -36,6 +36,23 @@ class PresenterConfiguration {
     }
   }
 
+  int getDomeSize() {
+    return globalConfig.getInt("domeSize");
+  }
+
+  int getPointerSize() {
+    return globalConfig.getInt("pointerSize");
+  }
+
+  String getPointerColor() {
+    return globalConfig.getString("pointerColor");
+  }
+  
+  int getCanvasSize() {
+    return globalConfig.getInt("canvasSize");
+  }
+
+
   void saveData() {
     saveData(dataPath("config.json"));
   }

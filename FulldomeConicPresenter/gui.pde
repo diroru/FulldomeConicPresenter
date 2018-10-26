@@ -67,7 +67,7 @@ void coneOrientation(float f) {
 
 void prevImage() {
   img = myImgHandler.getPrevImage();
-  updateCanvas(img);
+//  updateCanvas(img);
   updateGui();
   BG_COLOR = myImgHandler.getBackgroundColor();
   /*
@@ -81,7 +81,7 @@ void prevImage() {
 
 void nextImage() {
   img = myImgHandler.getNextImage();
-  updateCanvas(img);
+ // updateCanvas(img);
   updateGui();
   BG_COLOR = myImgHandler.getBackgroundColor();
   /*
