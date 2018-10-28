@@ -1,6 +1,6 @@
 //overloaded with global vars
 PVector mappedMouse(int mode) {
-  return mappedMouse(mode, mouseX, mouseY, canvas.width, canvas.height, APERTURE, CONE_RADIUS_TOP, CONE_RADIUS_BOTTOM, CONE_HEIGHT, CONE_BOTTOM, CONE_ORIENTATION);
+  return mappedMouse(mode, mouseX, mouseY, canvas.width, canvas.height, myStateManager.getAperture(), myStateManager.getConeRadiusTop(), myStateManager.getConeRadiusBottom(), myStateManager.getConeHeight(), myStateManager.getConeBottom(), myStateManager.getConeOrientation());
 }
 
 //decoupled version
@@ -28,9 +28,9 @@ float canvasToWindowRatio(float cw, float ch, float ww, float wh) {
 
 PVector getConicMappedMouse(float mx, float my, float canvasWidth, float canvasHeight, float windowWidth, float windowHeight) {
   PVector normalizedMouse = new PVector(norm(mx, 0, windowWidth), norm(my, 0, windowHeight));
-  PVector latLon = domeXYToLatLon(normalizedMouse, APERTURE * PI);
+  PVector latLon = domeXYToLatLon(normalizedMouse, myStateManager.getAperture() * PI);
   PVector ray = latLonToXYZ(latLon);
-  PVector st = conicTexCoordinates(ray, CONE_BOTTOM, CONE_RADIUS_BOTTOM, CONE_HEIGHT, CONE_RADIUS_TOP, CONE_ORIENTATION / 360f);
+  PVector st = conicTexCoordinates(ray, myStateManager.getConeBottom(), myStateManager.getConeRadiusBottom(), myStateManager.getConeHeight(), myStateManager.getConeRadiusTop(), myStateManager.getConeOrientation() / 360f);
   if (st == null) {
     return new PVector(-1, -1);
   }

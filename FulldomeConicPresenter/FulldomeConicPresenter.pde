@@ -13,26 +13,27 @@ final int CANVAS_MODE = 1;
 PGraphics canvas;
 ConicMeshInfo coneInfo;
 
+/*
 float APERTURE = 1f;
-float CONE_RADIUS_BOTTOM = 512;
-float CONE_RADIUS_TOP = 512;
-float CONE_HEIGHT = 512;
-float CONE_BOTTOM = 0;
-float CONE_ORIENTATION = 0;
+ float CONE_RADIUS_BOTTOM = 512;
+ float CONE_RADIUS_TOP = 512;
+ float CONE_HEIGHT = 512;
+ float CONE_BOTTOM = 0;
+ float CONE_ORIENTATION = 0;
+ */
 
 //PImage img;
 
 ControlP5 cp5;
-ImageHandler myImgHandler;
+ImageHandler myImageHandler;
+StateManager myStateManager;
 PresenterConfiguration myConfig;
-color BG_COLOR = color(0);
+//color BG_COLOR = color(0);
 color pointerColor;
 boolean showCursor = true;
 
 /*TODO
  - usage documentation
- - fitting options
- – transition -> STATE_MACHINE 
  */
 
 void setup() {
@@ -40,18 +41,18 @@ void setup() {
   pixelDensity(displayDensity());
   Ani.init(this);
 
-  myImgHandler = new ImageHandler("images");
+  myImageHandler = new ImageHandler("images");
+  myConfig = new PresenterConfiguration("config.json", myImageHandler);
+  myStateManager = new StateManager(myConfig);
 
   //img = myImgHandler.currentImg;
-  BG_COLOR = myImgHandler.getBackgroundColor();
-
-  myConfig = new PresenterConfiguration("config.json", myImgHandler);
+  //BG_COLOR = myImgHandler.getBackgroundColor();
 
   surface.setResizable(true);
   surface.setSize(myConfig.getDomeSize(), myConfig.getDomeSize());
   surface.setResizable(false);
 
-  coneInfo = new ConicMeshInfo(width/2, height/2);
+  coneInfo = new ConicMeshInfo(width/2, height/2, myStateManager);
   pointerColor = unhex(myConfig.getPointerColor());
 
   domeShader = loadShader("glsl/fulldomeCone.frag", "glsl/fulldomeCone.vert");
@@ -66,25 +67,29 @@ void setup() {
   domeQuad = getShape(width, height);
   coneQuad = getShape(myConfig.getCanvasSize(), myConfig.getCanvasSize()/2);
 
+  /*
   APERTURE = myConfig.getImageParam(myImgHandler.currentImgIndex, "aperture");
-  CONE_RADIUS_BOTTOM = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_radius_bottom");
-  CONE_RADIUS_TOP = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_radius_top");
-  CONE_HEIGHT = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_height");
-  CONE_BOTTOM = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_bottom");
-  CONE_ORIENTATION = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_orientation");
+   CONE_RADIUS_BOTTOM = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_radius_bottom");
+   CONE_RADIUS_TOP = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_radius_top");
+   CONE_HEIGHT = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_height");
+   CONE_BOTTOM = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_bottom");
+   CONE_ORIENTATION = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_orientation");
+   */
   initGUI();
 }
 
 void draw() {
   PVector mm = mappedMouse(FULLDOME_MODE);
-
-  background(BG_COLOR);
-  float pointerSize = myConfig.getPointerSize() * myImgHandler.currentImg.height / float(height);
-
+  color backgroundColor = myStateManager.getBackgroundColor();
+  background(backgroundColor);
+  float pointerSize = myStateManager.getPointerSize();
   canvas.beginDraw();
-  //canvas.background(BG_COLOR);
-  canvas.background(0);
-  myImgHandler.draw(canvas);
+  canvas.background(backgroundColor);
+  canvas.pushMatrix();
+  canvas.translate(canvas.width, 0);
+  canvas.scale(-1, 1);
+  myStateManager.draw(canvas);
+  canvas.popMatrix();
   canvas.ellipseMode(RADIUS);
   canvas.noStroke();
   canvas.fill(pointerColor);
@@ -108,12 +113,12 @@ void draw() {
 }
 
 void updateShader() {
-  domeShader.set("aperture", APERTURE);
-  domeShader.set("radiusBottom", CONE_RADIUS_BOTTOM);
-  domeShader.set("radiusTop", CONE_RADIUS_TOP);
-  domeShader.set("coneBottom", CONE_BOTTOM);
-  domeShader.set("coneHeight", CONE_HEIGHT);
-  domeShader.set("coneOrientation", CONE_ORIENTATION);
+  domeShader.set("aperture", myStateManager.getAperture());
+  domeShader.set("radiusBottom", myStateManager.getConeRadiusBottom());
+  domeShader.set("radiusTop", myStateManager.getConeRadiusTop());
+  domeShader.set("coneBottom", myStateManager.getConeBottom());
+  domeShader.set("coneHeight", myStateManager.getConeHeight());
+  domeShader.set("coneOrientation", myStateManager.getConeOrientation());
 }
 
 void mouseWheel(MouseEvent event) {
@@ -140,9 +145,9 @@ void mouseMoved() {
     int dmy = (pmouseY - mouseY);
     int dmx = (pmouseX - mouseX);
     if (abs(radComponent) > abs(tanComponent)) {
-      coneBottom(CONE_BOTTOM + radComponent);
+      coneBottom(myStateManager.getConeBottom() + radComponent);
     } else {
-      coneOrientation(CONE_ORIENTATION - map(-tanComponent, 0, width / 4, 0, 45));
+      coneOrientation(myStateManager.getConeOrientation() - map(-tanComponent, 0, width / 4, 0, 45));
     }  
     updateGui();
   }

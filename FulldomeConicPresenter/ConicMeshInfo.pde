@@ -2,13 +2,15 @@ class ConicMeshInfo {
   PGraphics canvas;
   //float aperture, angle, radiusBottom, radiusTop, height, bottom;
   float margin = 10;
+  StateManager myStateManager;
 
-  ConicMeshInfo(int w, int h) {
+  ConicMeshInfo(int w, int h, StateManager theStateManager) {
     canvas = createGraphics(w, h, P2D);
+    myStateManager = theStateManager;
   }
 
   PGraphics getCanvas() {
-    return getCanvas(APERTURE, CONE_RADIUS_BOTTOM, CONE_RADIUS_TOP, CONE_HEIGHT, CONE_BOTTOM);
+    return getCanvas(myStateManager.getAperture(), myStateManager.getConeRadiusBottom(), myStateManager.getConeRadiusTop(), myStateManager.getConeHeight(), myStateManager.getConeBottom());
   }
 
   PGraphics getCanvas(float aperture, float radiusBottom, float radiusTop, float coneHeight, float coneBottom) {
@@ -41,7 +43,7 @@ class ConicMeshInfo {
       dRadius = sin(coneAngle) * radiusBottom;
     }
     */
-    float domeBottom = -max(0, sin((APERTURE * PI - PI)*0.5)) * domeRadius;
+    float domeBottom = -max(0, sin((aperture * PI - PI)*0.5)) * domeRadius;
     float visibleTop = max(coneTop, domeRadius);
     float visibleBottom = min(coneBottom, domeBottom);    
     float visibleHeight = visibleTop - visibleBottom;

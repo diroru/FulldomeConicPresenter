@@ -2,6 +2,7 @@ class PresenterConfiguration {
   String myPath;
   JSONObject defaultConfig, globalConfig;
   JSONArray imageConfig;
+  PImage currentImg, nextImg;
 
   PresenterConfiguration(String thePath, ImageHandler theImageHandler) {
     myPath = thePath;
@@ -99,6 +100,10 @@ class PresenterConfiguration {
     }
   }
 
+  float getDuration() {
+    return globalConfig.getFloat("transitionDuration");
+  }
+
   JSONObject getDefaultObject() {
     JSONObject result = new JSONObject();
     for (Object theKeyObj : defaultConfig.keys()) {
@@ -110,4 +115,5 @@ class PresenterConfiguration {
     result.setString("name", "");
     return result;
   }
+  
 }

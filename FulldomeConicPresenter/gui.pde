@@ -15,17 +15,17 @@ void initGUI() {
   //cp5.addButton("button", 10, 100, 60, 80, 20).setId(1);
   //cp5.addButton("buttonValue", 4, 100, 90, 80, 20).setId(2);
 
-  cp5.addSlider("coneBottom", -1000, 1000).setValue(CONE_BOTTOM).setHeight(h).setWidth(w).setPosition(margin, y0);
+  cp5.addSlider("coneBottom", -1000, 1000).setValue(myStateManager.getConeBottom()).setHeight(h).setWidth(w).setPosition(margin, y0);
   y0 += h + padding;
-  cp5.addSlider("coneHeight", 0, 4000).setValue(CONE_HEIGHT).setHeight(h).setWidth(w).setPosition(margin, y0);
+  cp5.addSlider("coneHeight", 0, 4000).setValue(myStateManager.getConeHeight()).setHeight(h).setWidth(w).setPosition(margin, y0);
   y0 += h + padding;
-  cp5.addSlider("coneRadiusTop", 0, 1000).setValue(CONE_RADIUS_TOP).setHeight(h).setWidth(w).setPosition(margin, y0);
+  cp5.addSlider("coneRadiusTop", 0, 1000).setValue(myStateManager.getConeRadiusTop()).setHeight(h).setWidth(w).setPosition(margin, y0);
   y0 += h + padding;
-  cp5.addSlider("coneRadiusBottom", 0, 1000).setValue(CONE_RADIUS_BOTTOM).setHeight(h).setWidth(w).setPosition(margin, y0);
+  cp5.addSlider("coneRadiusBottom", 0, 1000).setValue(myStateManager.getConeRadiusBottom()).setHeight(h).setWidth(w).setPosition(margin, y0);
   y0 += h + padding;
-  cp5.addSlider("aperture", 0, 2).setValue(APERTURE).setHeight(h).setWidth(w).setPosition(margin, y0);
+  cp5.addSlider("aperture", 0, 2).setValue(myStateManager.getAperture()).setHeight(h).setWidth(w).setPosition(margin, y0);
   y0 += h + padding;
-  cp5.addSlider("coneOrientation", 0, 360).setValue(CONE_ORIENTATION).setHeight(h).setWidth(w).setPosition(margin, y0);
+  cp5.addSlider("coneOrientation", 0, 360).setValue(myStateManager.getConeOrientation()).setHeight(h).setWidth(w).setPosition(margin, y0);
   y0 += h + padding;
   cp5.addButton("nextImage").setHeight(h).setWidth(bw).setPosition(margin, y0);
   y0 += h + padding;
@@ -37,40 +37,36 @@ void initGUI() {
 }
 
 void coneBottom(float f) {
-  CONE_BOTTOM = f;
-  myConfig.setImageParam(myImgHandler.currentImgIndex, "cone_bottom", f);
+  myConfig.setImageParam(myStateManager.currentStateIndex, "cone_bottom", f);
 }
 
 void coneHeight(float f) {
-  CONE_HEIGHT = f;
-  myConfig.setImageParam(myImgHandler.currentImgIndex, "cone_height", f);
+  myConfig.setImageParam(myStateManager.currentStateIndex, "cone_height", f);
 }
 
 void coneRadiusTop(float f) {
-  CONE_RADIUS_TOP = f;
-  myConfig.setImageParam(myImgHandler.currentImgIndex, "cone_radius_top", f);
+  myConfig.setImageParam(myStateManager.currentStateIndex, "cone_radius_top", f);
 }
 
 void coneRadiusBottom(float f) {
-  CONE_RADIUS_BOTTOM = f;
-  myConfig.setImageParam(myImgHandler.currentImgIndex, "cone_radius_bottom", f);
+  myConfig.setImageParam(myStateManager.currentStateIndex, "cone_radius_bottom", f);
 }
 
 void aperture(float f) {
-  APERTURE = f;
-  myConfig.setImageParam(myImgHandler.currentImgIndex, "aperture", f);
+  myConfig.setImageParam(myStateManager.currentStateIndex, "aperture", f);
 }
 void coneOrientation(float f) {
-  CONE_ORIENTATION = f;
-  myConfig.setImageParam(myImgHandler.currentImgIndex, "cone_orientation", f);
+  myConfig.setImageParam(myStateManager.currentStateIndex, "cone_orientation", f);
 }
 
 void prevImage() {
   //img = myImgHandler.getPrevImage();
-  myImgHandler.prevImage();
-//  updateCanvas(img);
-  updateGui();
-  BG_COLOR = myImgHandler.getBackgroundColor();
+  //myImgHandler.prevImage();
+  //  updateCanvas(img);
+
+  myStateManager.previousState();
+  //updateGui();
+  //BG_COLOR = myImgHandler.getBackgroundColor();
   /*
   try {
    mesh.setTexture(loadImage(images.get(currentImage)));
@@ -82,10 +78,13 @@ void prevImage() {
 
 void nextImage() {
   //img = myImgHandler.getNextImage();
-  myImgHandler.nextImage();
- // updateCanvas(img);
-  updateGui();
-  BG_COLOR = myImgHandler.getBackgroundColor();
+
+  myStateManager.nextState();
+  //updateGui();
+  //myImgHandler.nextImage();
+  // updateCanvas(img);
+
+  //BG_COLOR = myImgHandler.getBackgroundColor();
   /*
   try {
    mesh.setTexture(loadImage(images.get(currentImage)));
@@ -100,12 +99,12 @@ void saveConfig() {
 }
 
 void updateGui() {
-  cp5.get("coneBottom").setValue(myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_bottom"));
-  cp5.get("coneHeight").setValue(myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_height"));
-  cp5.get("coneRadiusTop").setValue(myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_radius_top"));
-  cp5.get("coneRadiusBottom").setValue(myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_radius_bottom"));
-  cp5.get("aperture").setValue(myConfig.getImageParam(myImgHandler.currentImgIndex, "aperture"));
-  cp5.get("coneOrientation").setValue(myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_orientation"));
+  cp5.get("coneBottom").setValue(myStateManager.getConeBottom());
+  cp5.get("coneHeight").setValue(myStateManager.getConeHeight());
+  cp5.get("coneRadiusTop").setValue(myStateManager.getConeRadiusTop());
+  cp5.get("coneRadiusBottom").setValue(myStateManager.getConeRadiusBottom());
+  cp5.get("aperture").setValue(myStateManager.getAperture());
+  cp5.get("coneOrientation").setValue(myStateManager.getConeOrientation());
 }  
 
 
