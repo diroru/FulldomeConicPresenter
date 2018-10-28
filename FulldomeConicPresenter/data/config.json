@@ -6,43 +6,40 @@
     "canvasSize": 4096
   },
   "defaultConfig": {
-    "cone_radius_top": 512,
     "aperture": 1,
     "cone_bottom": 0,
-    "cone_height": 512,
-    "cone_radius_bottom": 512,
+    "cone_height": 238,
+    "cone_radius_bottom": 186,
+    "cone_radius_top": 66,
     "cone_orientation": 0
   },
   "imageConfig": [
     {
-      "cone_radius_top": 179.99998474121094,
       "path": "/Users/dimitar/Documents/Processing/sketches/fulldome/FulldomeConicPresenter/data/images/01_input.jpg",
-      "aperture": 0.4399999976158142,
-      "cone_bottom": 410,
-      "cone_height": 512,
-      "name": "01_input.jpg",
-      "cone_radius_bottom": 329.9999694824219,
-      "cone_orientation": 75.5999984741211
-    },
-    {
-      "cone_radius_top": 815,
-      "path": "/Users/dimitar/Documents/Processing/sketches/fulldome/FulldomeConicPresenter/data/images/02_serveimage.png",
-      "aperture": 0.6800000071525574,
+      "aperture": 1,
       "cone_bottom": 0,
-      "cone_height": 512,
-      "name": "02_serveimage.png",
-      "cone_radius_bottom": 512,
+      "cone_height": 238,
+      "cone_radius_bottom": 186,
+      "cone_radius_top": 66,
       "cone_orientation": 0
     },
     {
-      "cone_radius_top": 512,
-      "path": "/Users/dimitar/Documents/Processing/sketches/fulldome/FulldomeConicPresenter/data/images/03_serveimage.jpeg",
-      "aperture": 0.75,
+      "path": "/Users/dimitar/Documents/Processing/sketches/fulldome/FulldomeConicPresenter/data/images/02_serveimage.png",
+      "aperture": 1,
       "cone_bottom": 0,
-      "cone_height": 512,
-      "name": "03_serveimage.jpeg",
-      "cone_radius_bottom": 65,
-      "cone_orientation": 208.79998779296875
+      "cone_height": 238,
+      "cone_radius_bottom": 186,
+      "cone_radius_top": 66,
+      "cone_orientation": 0
+    },
+    {
+      "path": "/Users/dimitar/Documents/Processing/sketches/fulldome/FulldomeConicPresenter/data/images/03_serveimage.jpeg",
+      "aperture": 1,
+      "cone_bottom": 0,
+      "cone_height": 238,
+      "cone_radius_bottom": 186,
+      "cone_radius_top": 66,
+      "cone_orientation": 0
     }
   ]
 }

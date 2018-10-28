@@ -29,11 +29,10 @@ color BG_COLOR = color(0);
 color pointerColor;
 boolean showCursor = true;
 
-/*TODO:
- - smoothing
+/*TODO
  - usage documentation
  - fitting options
- – transition 
+ – transition -> STATE_MACHINE 
  */
 
 void setup() {
@@ -83,7 +82,8 @@ void draw() {
   float pointerSize = myConfig.getPointerSize() * myImgHandler.currentImg.height / float(height);
 
   canvas.beginDraw();
-  canvas.background(BG_COLOR);
+  //canvas.background(BG_COLOR);
+  canvas.background(0);
   myImgHandler.draw(canvas);
   canvas.ellipseMode(RADIUS);
   canvas.noStroke();
