@@ -1,6 +1,6 @@
 {
   "globalConfig": {
-    "domeSize": 600,
+    "domeSize": 1024,
     "pointerColor": "FF00FF00",
     "transitionDuration": 2,
     "pointerSize": 10,
