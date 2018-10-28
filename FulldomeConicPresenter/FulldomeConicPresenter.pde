@@ -1,9 +1,11 @@
 //TODO: settings in config file!!!
 import controlP5.*;
 import java.util.Collections;
+import de.looksgood.ani.*;
 
 PShader domeShader;
-PShape domeQuad;
+PShader transitionShader;
+PShape domeQuad, coneQuad;
 
 final int FULLDOME_MODE = 0;
 final int CANVAS_MODE = 1;
@@ -18,7 +20,7 @@ float CONE_HEIGHT = 512;
 float CONE_BOTTOM = 0;
 float CONE_ORIENTATION = 0;
 
-PImage img;
+//PImage img;
 
 ControlP5 cp5;
 ImageHandler myImgHandler;
@@ -28,23 +30,20 @@ color pointerColor;
 boolean showCursor = true;
 
 /*TODO:
- - image handling
- - background color
  - smoothing
  - usage documentation
  - fitting options
- – config 
  – transition 
- - scale cursor
  */
 
 void setup() {
   size(512, 512, P3D);
   pixelDensity(displayDensity());
+  Ani.init(this);
 
   myImgHandler = new ImageHandler("images");
 
-  img = myImgHandler.currentImg;
+  //img = myImgHandler.currentImg;
   BG_COLOR = myImgHandler.getBackgroundColor();
 
   myConfig = new PresenterConfiguration("config.json", myImgHandler);
@@ -57,6 +56,7 @@ void setup() {
   pointerColor = unhex(myConfig.getPointerColor());
 
   domeShader = loadShader("glsl/fulldomeCone.frag", "glsl/fulldomeCone.vert");
+  transitionShader = loadShader("glsl/crossFade.frag", "glsl/crossFade.vert"); 
   updateShader();
 
   canvas = createGraphics(myConfig.getCanvasSize(), myConfig.getCanvasSize()/2, P2D);
@@ -64,7 +64,8 @@ void setup() {
   domeShader.set("canvas", canvas);
   //updateCanvas(img);
 
-  initShape();
+  domeQuad = getShape(width, height);
+  coneQuad = getShape(myConfig.getCanvasSize(), myConfig.getCanvasSize()/2);
 
   APERTURE = myConfig.getImageParam(myImgHandler.currentImgIndex, "aperture");
   CONE_RADIUS_BOTTOM = myConfig.getImageParam(myImgHandler.currentImgIndex, "cone_radius_bottom");
@@ -79,11 +80,11 @@ void draw() {
   PVector mm = mappedMouse(FULLDOME_MODE);
 
   background(BG_COLOR);
-  float pointerSize = myConfig.getPointerSize() * img.height / float(height);
+  float pointerSize = myConfig.getPointerSize() * myImgHandler.currentImg.height / float(height);
 
   canvas.beginDraw();
   canvas.background(BG_COLOR);
-  fitImage(canvas, img);
+  myImgHandler.draw(canvas);
   canvas.ellipseMode(RADIUS);
   canvas.noStroke();
   canvas.fill(pointerColor);
@@ -120,26 +121,55 @@ void mouseWheel(MouseEvent event) {
   //CONE_HEIGHT = floor(constrain(CONE_HEIGHT+ e,0,4096));
 }
 
+void mouseMoved() {
+
+  //PVector mm = mappedMouse(FULLDOME_MODE);
+  if (keyPressed && keyCode == SHIFT) {
+
+    PVector dm = new PVector(pmouseX - mouseX, pmouseY - mouseY);
+    PVector radial = new PVector(mouseX - width/2, mouseY - height/2);
+    radial.normalize();
+    PVector tangential = radial.copy();
+    tangential.rotate(HALF_PI);
+    tangential.normalize();
+
+    float radComponent = dm.dot(radial);
+    float tanComponent = dm.dot(tangential);
+    //println(radComponent, tanComponent);
+
+    int dmy = (pmouseY - mouseY);
+    int dmx = (pmouseX - mouseX);
+    if (abs(radComponent) > abs(tanComponent)) {
+      coneBottom(CONE_BOTTOM + radComponent);
+    } else {
+      coneOrientation(CONE_ORIENTATION - map(-tanComponent, 0, width / 4, 0, 45));
+    }  
+    updateGui();
+  }
+}
+
 void mouseDragged() {
+  /*
   PVector dm = new PVector(pmouseX - mouseX, pmouseY - mouseY);
-  PVector radial = new PVector(mouseX - width/2, mouseY - height/2);
-  radial.normalize();
-  PVector tangential = radial.copy();
-  tangential.rotate(HALF_PI);
-  tangential.normalize();
-  
-  float radComponent = dm.dot(radial);
-  float tanComponent = dm.dot(tangential);
-  println(radComponent, tanComponent);
+   PVector radial = new PVector(mouseX - width/2, mouseY - height/2);
+   radial.normalize();
+   PVector tangential = radial.copy();
+   tangential.rotate(HALF_PI);
+   tangential.normalize();
    
-  int dmy = (pmouseY - mouseY);
-  int dmx = (pmouseX - mouseX);
-  if (abs(radComponent) > abs(tanComponent)) {
-    coneBottom(CONE_BOTTOM + radComponent);
-  } else {
-    coneOrientation(CONE_ORIENTATION - map(-tanComponent, 0, width / 4, 0, 45));
-  }  
-  updateGui();
+   float radComponent = dm.dot(radial);
+   float tanComponent = dm.dot(tangential);
+   //println(radComponent, tanComponent);
+   
+   int dmy = (pmouseY - mouseY);
+   int dmx = (pmouseX - mouseX);
+   if (abs(radComponent) > abs(tanComponent)) {
+   coneBottom(CONE_BOTTOM + radComponent);
+   } else {
+   coneOrientation(CONE_ORIENTATION - map(-tanComponent, 0, width / 4, 0, 45));
+   }  
+   updateGui();
+   */
   //CONE_ORIENTATION += map((pmouseX - mouseX), 0, width / 4, 0, 0.25);
   //CONE_BOTTOM = constrain(CONE_BOTTOM, -2048, 2048);
 }
@@ -153,7 +183,7 @@ void keyPressed() {
   case 'C':
   case 'c':
     showCursor = !showCursor;
-    if(showCursor) {
+    if (showCursor) {
       cursor();
     } else {
       noCursor();
@@ -179,6 +209,21 @@ void updateCanvas(PImage img) {
  }
  */
 
+PShape getShape(int w, int h) {
+  PShape result = createShape();
+  result.beginShape();
+  result.fill(255, 255, 0);
+  result.textureMode(NORMAL);
+  result.noStroke();
+  result.vertex(-w * 0.5f, -h * 0.5f, 0, 1, 1);
+  result.vertex(w * 0.5f, -h * 0.5f, 0, 0, 1);
+  result.vertex(w * 0.5f, h * 0.5f, 0, 0, 0);
+  result.vertex(-w * 0.5f, h * 0.5f, 0, 1, 0);
+  result.endShape();
+  return result;
+}
+
+
 void initShape() {
   domeQuad = createShape();
   domeQuad.beginShape();
@@ -190,14 +235,4 @@ void initShape() {
   domeQuad.vertex(width * 0.5f, height * 0.5f, 0, 0, 0);
   domeQuad.vertex(-width * 0.5f, height * 0.5f, 0, 1, 0);
   domeQuad.endShape();
-}
-
-void fitImage(PGraphics canvas, PImage img) {
-  float s = max(float(canvas.width)/img.width, float(canvas.height)/img.height);
-  canvas.image(img, 0, 0, img.width*s, img.height*s);
-}
-
-void mouseMoved() {
-  PVector mm = mappedMouse(FULLDOME_MODE);
-  //println(mm.x, mm.y);
 }

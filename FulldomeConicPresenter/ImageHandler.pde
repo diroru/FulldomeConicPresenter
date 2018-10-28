@@ -3,72 +3,47 @@ class ImageHandler {
   HashMap<String, String> imageNameMap  = new HashMap<String, String>();
   ArrayList<String> imageNames = new ArrayList<String>();
 
-  PImage prevImg, currentImg, nextImg;
+  PImage currentImg, nextImg;
   int currentImgIndex = 0;
+
+  boolean scheduleTransition = false;
+  boolean inTransition = false;
+  float transitionAlpha = 0;
+
+  Ani transitionAni;
 
   ImageHandler(String path) {
     loadImages(path);
     currentImg = getImage(currentImgIndex);
-    //prevImg = getImage(currentImgIndex-1);
-    //nextImg = getImage(currentImgIndex+1);
+    //transitionAni = new Ani(this, 2, 0, "transitionAlpha", 255, Ani.LINEAR, "onEnd:transitionEnd");
   }
 
-  PImage getNextImage() {
+  void nextImage() {
+    transitionEnd();
     currentImgIndex = (currentImgIndex + 1) %  imageNames.size();
-    currentImg = getImage(currentImgIndex);
+    //currentImg = getImage(currentImgIndex);
+    nextImg = getImage(currentImgIndex);
+    scheduleTransition = true;
     /*
-     prevImg = currentImg.copy();
-     currentImg = nextImg.copy();
-     nextImg = getImage(currentImgIndex+1);
-     */
-    //currentImg = getImage(currentImgIndex+1);
-
-
-    /*
-    prevImg = currentImg;
-     currentImg = nextImg;
-     nextImg = getImage(currentImgIndex+1);
-     */
-    //prevImg = getImage(currentImgIndex);
-    //currentImg = getImage(currentImgIndex+1);
-    //nextImg = getImage(currentImgIndex+2);
-    while (currentImg.width == 0) {
-      println("waiting");
+    if (transitionAni != null) {
+      transitionAni.end();
     }
-    println("current", imageNames.get(currentImgIndex));
-    println("---");
-    return currentImg;
+    */
+    transitionShader.set("fadeFactor", 0.5f);
   }
 
-  PImage getPrevImage() {
+  void prevImage() {
+    transitionEnd();
     currentImgIndex = (currentImgIndex + imageNames.size() - 1) %  imageNames.size();
-    currentImg = getImage(currentImgIndex);
+    //currentImg = getImage(currentImgIndex);
+    nextImg = getImage(currentImgIndex);
+    scheduleTransition = true;
     /*
-     prevImg = currentImg.copy();
-     currentImg = nextImg.copy();
-     nextImg = getImage(currentImgIndex-1);
-     */
-
-    //currentImg = getImage(currentImgIndex-1);
-
-
-
-    //prevImg = getImage(currentImgIndex);
-    //currentImg = getImage(currentImgIndex+1);
-    //nextImg = getImage(currentImgIndex+2);
-
-    /*
-    nextImg = currentImg;
-    currentImg = prevImg;
-    prevImg = getImage(currentImgIndex-1);
-    */
-    while (currentImg.width == 0) {
-      println("waiting");
+    if (transitionAni != null) {
+      transitionAni.end();
     }
-
-    println("current", imageNames.get(currentImgIndex));
-    println("---");
-    return currentImg;
+    */
+    transitionShader.set("fadeFactor", 0.5f);
   }
 
   PImage getImage(int index) {
@@ -114,9 +89,9 @@ class ImageHandler {
      }
      */
   }
-  
+
   color getBackgroundColor() {
-    return currentImg.get(0,0);
+    return currentImg.get(0, 0);
   }
 
   String getImageName(int index) {
@@ -130,5 +105,67 @@ class ImageHandler {
 
   int getImageCount() {
     return imageNames.size();
+  }
+
+  void draw(PGraphics canvas) {
+    if (scheduleTransition && nextImg.width > 0 && currentImg.width > 0) {
+      println("transition scheduled");
+      if (transitionAni != null && transitionAni.isPlaying()) {
+        transitionAni.end();
+      }
+      transitionAlpha = 0;
+      //transitionShader.set("inTex", currentImg);
+      //transitionShader.set("outTex", nextImg);
+      transitionAni = new Ani(this, 2, 0, "transitionAlpha", 255, Ani.LINEAR, "onEnd:transitionEnd");
+      //transitionAni.start();
+      scheduleTransition = false;
+      inTransition = true;
+    }
+    fitImage(canvas, currentImg, 255);
+    println(transitionAlpha);
+    if (inTransition) {
+      fitImage(canvas, nextImg, transitionAlpha);
+    }
+    //transitionShader.set("inTex", currentImg);
+    //transitionShader.set("outTex", nextImg);
+    //canvas.shader(transitionShader);
+    //fitImage(canvas, currentImg, 255);
+    //canvas.shader(transitionShader);
+    //canvas.shape(coneQuad);
+    //canvas.resetShader();
+    //transitionShader.set("fadeFactor", transitionAlpha);
+    /*
+    canvas.shader(transitionShader);
+     canvas.pushMatrix();
+     canvas.translate(canvas.width*0.5, canvas.height*0.5);
+     canvas.shape(coneQuad);
+     canvas.resetShader();
+     canvas.popMatrix();
+     */
+    /*
+    println(transitionAlpha);
+     fitImage(canvas, currentImg, 255);
+     if (transitionAni != null && transitionAni.isPlaying()) {
+     //fitImage(canvas, nextImg, transitionAlpha);
+     }
+     */
+  }
+
+  void transitionEnd() {
+    println("transition finished");
+    scheduleTransition = false;
+    inTransition = false;
+    if (transitionAni != null && transitionAni.isPlaying()) {
+      transitionAni.end();
+    }
+    if (nextImg != null) {
+      currentImg = nextImg;
+    }
+  }
+
+  void fitImage(PGraphics canvas, PImage img, float alpha) {
+    float s = max(float(canvas.width)/img.width, float(canvas.height)/img.height);
+    canvas.tint(255, alpha);
+    canvas.image(img, 0, 0, img.width*s, img.height*s);
   }
 }
