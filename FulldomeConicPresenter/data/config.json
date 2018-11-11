@@ -4,7 +4,8 @@
     "pointerColor": "FF00FF00",
     "transitionDuration": 2,
     "pointerSize": 10,
-    "canvasSize": 4096
+    "canvasSize": 4096,
+    "infoSize": 200
   },
   "defaultConfig": {
     "cone_radius_top": 66,

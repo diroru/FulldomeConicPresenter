@@ -45,6 +45,10 @@ class PresenterConfiguration {
     return globalConfig.getInt("pointerSize");
   }
 
+  int getInfoSize() {
+    return globalConfig.getInt("infoSize");
+  }
+
   String getPointerColor() {
     return globalConfig.getString("pointerColor");
   }

@@ -52,7 +52,7 @@ void setup() {
   surface.setSize(myConfig.getDomeSize(), myConfig.getDomeSize());
   surface.setResizable(false);
 
-  coneInfo = new ConicMeshInfo(width/2, height/2, myStateManager);
+  coneInfo = new ConicMeshInfo(myConfig.getInfoSize(), myConfig.getInfoSize(), myStateManager);
   pointerColor = unhex(myConfig.getPointerColor());
 
   domeShader = loadShader("glsl/fulldomeCone.frag", "glsl/fulldomeCone.vert");
