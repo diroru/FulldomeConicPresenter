@@ -1,20 +1,29 @@
 class PresenterConfiguration {
-  String myPath;
+  String myConfigPath, myImageConfigPath;
   JSONObject defaultConfig, globalConfig;
   JSONArray imageConfig;
   PImage currentImg, nextImg;
 
-  PresenterConfiguration(String thePath, ImageHandler theImageHandler) {
-    myPath = thePath;
-    loadData(myPath);
+  PresenterConfiguration(String theConfigPath, String theImageConfigPath, ImageHandler theImageHandler) {
+    myConfigPath = theConfigPath;
+    myImageConfigPath = theImageConfigPath;
+    loadData(myConfigPath, myImageConfigPath);
     checkData(theImageHandler);
   }
 
-  void loadData(String thePath) {
-    JSONObject temp = loadJSONObject(thePath);
+  void loadData(String theConfigPath, String theImageConfigPath) {
+    //TODO: handle exceptions;
+    JSONObject temp = loadJSONObject(theConfigPath);
     defaultConfig = temp.getJSONObject("defaultConfig");
     globalConfig = temp.getJSONObject("globalConfig");
-    imageConfig = temp.getJSONArray("imageConfig");
+    
+    JSONArray temp2 = null;
+    try {
+      temp2 = loadJSONArray(theImageConfigPath);
+    } catch (Exception e) {
+      temp2 = new JSONArray();
+    }
+    imageConfig = temp2;
   }
 
   void checkData(ImageHandler theImageHandler) {
@@ -59,15 +68,12 @@ class PresenterConfiguration {
 
 
   void saveData() {
-    saveData(dataPath("config.json"));
+    saveData(myImageConfigPath);
   }
 
-  void saveData(String thePath) {
-    JSONObject temp = new JSONObject();
-    temp.setJSONObject("defaultConfig", defaultConfig);
-    temp.setJSONObject("globalConfig", globalConfig);
-    temp.setJSONArray("imageConfig", imageConfig);
-    saveJSONObject(temp, thePath);
+  void saveData(String theImageConfigPath) {
+    println(imageConfig);
+    saveJSONArray(imageConfig, dataPath(theImageConfigPath));
   }
 
   String getImagePath(int index) {

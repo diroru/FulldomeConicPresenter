@@ -14,37 +14,5 @@
     "cone_height": 238,
     "cone_radius_bottom": 186,
     "cone_orientation": 0
-  },
-  "imageConfig": [
-    {
-      "cone_radius_top": 440,
-      "path": "/Users/dimitar/Documents/Processing/sketches/fulldome/FulldomeConicPresenter/data/images/01_input.jpg",
-      "aperture": 1,
-      "cone_bottom": -1000,
-      "cone_height": 3620,
-      "name": "01_input.jpg",
-      "cone_radius_bottom": 1000,
-      "cone_orientation": 207.7803192138672
-    },
-    {
-      "cone_radius_top": 66,
-      "path": "/Users/dimitar/Documents/Processing/sketches/fulldome/FulldomeConicPresenter/data/images/02_serveimage.png",
-      "aperture": 1,
-      "cone_bottom": 0,
-      "cone_height": 238,
-      "name": "02_serveimage.png",
-      "cone_radius_bottom": 186,
-      "cone_orientation": 90
-    },
-    {
-      "cone_radius_top": 44.999996185302734,
-      "path": "/Users/dimitar/Documents/Processing/sketches/fulldome/FulldomeConicPresenter/data/images/03_serveimage.jpeg",
-      "aperture": 1,
-      "cone_bottom": 0,
-      "cone_height": 2419.999755859375,
-      "name": "03_serveimage.jpeg",
-      "cone_radius_bottom": 780,
-      "cone_orientation": 270
-    }
-  ]
+  }
 }

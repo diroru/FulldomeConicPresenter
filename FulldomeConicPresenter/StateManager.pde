@@ -83,6 +83,9 @@ class StateManager { //<>// //<>//
     }
     fitImage(canvas, currentImage, 255);
     if (inStateChange) {
+      canvas.noStroke();
+      canvas.fill(getBackgroundColor(), getAlpha());
+      canvas.rect(0,0,canvas.width,canvas.height);
       fitImage(canvas, nextImage, getAlpha());
       //updateGui();
     }
@@ -209,7 +212,7 @@ class StateManager { //<>// //<>//
   }
 
   void fitImage(PGraphics canvas, PImage img, float alpha) {
-    float s = max(float(canvas.width)/img.width, float(canvas.height)/img.height);
+    float s = min(float(canvas.width)/img.width, float(canvas.height)/img.height);
     canvas.tint(255, alpha);
     canvas.image(img, 0, 0, img.width*s, img.height*s);
   }

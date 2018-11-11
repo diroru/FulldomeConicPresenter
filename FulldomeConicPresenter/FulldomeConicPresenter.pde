@@ -42,7 +42,7 @@ void setup() {
   Ani.init(this);
 
   myImageHandler = new ImageHandler("images");
-  myConfig = new PresenterConfiguration("config.json", myImageHandler);
+  myConfig = new PresenterConfiguration("config.json", "images.json", myImageHandler);
   myStateManager = new StateManager(myConfig);
 
   //img = myImgHandler.currentImg;
